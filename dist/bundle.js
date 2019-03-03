@@ -30547,12 +30547,8 @@ module.exports = function(originalModule) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var INCREMENT = "INCREMENT";
-var SUCCESS_INCREMENT = "SUCCESS_INCREMENT";
 exports.increment = function () { return ({
     type: "INCREMENT"
-}); };
-exports.successIncrement = function () { return ({
-    type: "SUCCESS_INCREMENT"
 }); };
 
 
@@ -30723,10 +30719,10 @@ var initialState = {
 var reducer = function (state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case "INCREMENT":
-            return state;
         case "SUCCESS_INCREMENT":
             return __assign({}, state, { number: state.number + 1 });
+        case "FAIL_INCREMENT":
+            return state;
         default:
             return state;
     }
@@ -30796,41 +30792,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var effects_1 = __webpack_require__(/*! redux-saga/effects */ "./node_modules/redux-saga/dist/redux-saga-effects-npm-proxy.esm.js");
 var count_1 = __webpack_require__(/*! ../api/count */ "./src/api/count.ts");
 // take here and call other function
-function buttonClicked() {
+function increment() {
+    var data, res, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, effects_1.takeEvery("INCREMENT", sayHello)];
+            case 0: return [4 /*yield*/, effects_1.take("INCREMENT")];
             case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}
-exports.buttonClicked = buttonClicked;
-// called from other function and dispatch action
-function sayHello() {
-    var res;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, effects_1.call([count_1.default, "get"])];
-            case 1:
-                res = _a.sent();
-                console.log('saga');
-                console.log(res);
-                return [4 /*yield*/, effects_1.put({ type: "SUCCESS_INCREMENT" })];
+                data = _a.sent();
+                _a.label = 2;
             case 2:
+                _a.trys.push([2, 5, , 7]);
+                return [4 /*yield*/, effects_1.call([count_1.default, "get"])];
+            case 3:
+                res = _a.sent();
+                console.log(res);
+                return [4 /*yield*/, effects_1.put(exports.successIncrement())];
+            case 4:
                 _a.sent();
-                return [2 /*return*/];
+                return [3 /*break*/, 7];
+            case 5:
+                error_1 = _a.sent();
+                return [4 /*yield*/, effects_1.put(exports.failIncrement())];
+            case 6:
+                _a.sent();
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }
-exports.sayHello = sayHello;
+exports.increment = increment;
+var SUCCESS_INCREMENT = "SUCCESS_INCREMENT";
+var FAIL_INCREMENT = "FAIL_INCREMENT";
+exports.successIncrement = function () { return ({
+    type: "SUCCESS_INCREMENT"
+}); };
+exports.failIncrement = function () { return ({
+    type: "FAIL_INCREMENT"
+}); };
 function rootSaga() {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, effects_1.all([
-                    buttonClicked(),
-                    sayHello(),
+                    increment(),
                 ])];
             case 1:
                 _a.sent();

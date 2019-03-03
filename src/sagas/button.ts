@@ -1,23 +1,31 @@
-import { takeEvery, all, put, call } from 'redux-saga/effects'
+import { take, all, put, call } from 'redux-saga/effects'
 import countAPI from '../api/count';
 
 // take here and call other function
-export function* buttonClicked() {
-  yield takeEvery("INCREMENT", sayHello)
+export function* increment() {
+  yield take("INCREMENT")
+  try {
+    const res = yield call([countAPI, "get"])
+    console.log(res)
+    yield put(successIncrement())
+  } catch (error) {
+    yield put(failIncrement())
+  }
 }
 
-// called from other function and dispatch action
-export function* sayHello() {
-  // yield call(delay, 1000)
-  const res = yield call([countAPI, "get"])
-  console.log('saga')
-  console.log(res)
-  yield put({ type: "SUCCESS_INCREMENT"})  
-}
+const SUCCESS_INCREMENT = "SUCCESS_INCREMENT"
+const FAIL_INCREMENT = "FAIL_INCREMENT"
+
+export const successIncrement = () => ({
+  type: "SUCCESS_INCREMENT" as typeof SUCCESS_INCREMENT
+})
+
+export const failIncrement = () => ({
+  type: "FAIL_INCREMENT" as typeof FAIL_INCREMENT
+})
 
 export default function* rootSaga() {
   yield all([
-    buttonClicked(),
-    sayHello(),
+    increment(),
   ])
 }
